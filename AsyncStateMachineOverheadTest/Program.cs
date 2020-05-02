@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using BenchmarkDotNet;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Jobs;
 namespace AsyncStateMachineOverheadTest
 {
     class Program
@@ -12,8 +13,9 @@ namespace AsyncStateMachineOverheadTest
             BenchmarkRunner.Run<NestedAsync>();
         }
     }
-
-    
+    [MonoJob("Mono 6.8.0", @"C:\Program Files\Mono\bin\mono.exe")]
+    [SimpleJob(RuntimeMoniker.Net48)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     public partial class NestedAsync
     {
         [Benchmark]
@@ -21,19 +23,6 @@ namespace AsyncStateMachineOverheadTest
         {
             await NestedNoAsync20();
         }
-
-        [Benchmark]
-        public async ValueTask NestedYieldOnce()
-        {
-            await NestedYieldOnce20();
-        }
-        
-        [Benchmark]
-        public async ValueTask NestedYieldEach()
-        {
-            await NestedYieldEach20();
-        }
-
         [Benchmark]
         public async ValueTask InlineNoAsync()
         {
@@ -41,10 +30,23 @@ namespace AsyncStateMachineOverheadTest
         }
 
         [Benchmark]
+        public async ValueTask NestedYieldOnce()
+        {
+            await NestedYieldOnce20();
+        }
+
+        [Benchmark]
         public async ValueTask InlineYieldOnce()
         {
             await Task.Yield();
         }
+
+        [Benchmark]
+        public async ValueTask NestedYieldEach()
+        {
+            await NestedYieldEach20();
+        }
+
         
         [Benchmark]
         public async ValueTask InlineYieldEach()
